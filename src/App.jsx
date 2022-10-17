@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "./assets/components/Header";
 import InputContainer from "./assets/components/InputContainer";
 import MovieCards from "./assets/components/MovieCards";
-import "./styles.css";
+import "./Styles.css";
 
 // TODO: ADD RATING FILTER (MOST POPULAR TO LESS POPULAR)
 
