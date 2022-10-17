@@ -1,49 +1,68 @@
-// hooks
-import { useState, useEffect } from "react";
-
-// styles
-import "./Styles.css";
-
-//components
+import React, { useState, useEffect } from "react";
 import Header from "./assets/components/Header";
-import Search from "./assets/components/Search";
-import Movies from "./assets/components/Movies";
+import InputContainer from "./assets/components/InputContainer";
+import MovieCards from "./assets/components/MovieCards";
+import "./styles.css";
 
-// api url
-const API_URL = "http://www.omdbapi.com/?i=tt3896198&apikey=52845a7e";
+// TODO: ADD RATING FILTER (MOST POPULAR TO LESS POPULAR)
 
 function App() {
-  const [movies, setMovies] = useState([]);
-  const [search, setSearch] = useState('')
+  // states
+  const [text, setText] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [result, setResult] = useState([]);
 
-  const searchMovies = async (title) => {
-    const response = await fetch(`${API_URL}&s=${title}`);
-    const data = await response.json();
-    setMovies(data.Search);
+  // effects
+  useEffect(() => {
+    fetchMovie();
+  }, [searchTerm]);
+
+  // event handlers
+  const inputHandler = (e) => {
+    setText(e.target.value);
+  };
+  const searchHandler = (e) => {
+    e.preventDefault()
+    setSearchTerm(text);
   };
 
-  useEffect(() => {
-    searchMovies(movies[1]);
-  }, []);
+  // api
+  const api = {
+    key: "412e40eec1c64ad8fa0633c24141271a",
+    base: "https://api.themoviedb.org/3/search/movie?api_key=",
+  };
 
-  // map through the elements of 'movies' array
-  const movieItems = movies.map((movie) => (
-    <Movies key={movie.imdbID} movie={movie} />
-  ));
+  // fetch movie
+  const fetchMovie = () => {
+    // let title = searchTerm === "" ? "superman" : searchTerm;
+    if (!searchTerm) {
+      fetch(`https://api.themoviedb.org/3/search/movie?api_key=412e40eec1c64ad8fa0633c24141271a&language=en-US&query=sony&page=1&include_adult=false`)
+        .then((res) => res.json())
+        .then((response) => setResult(response.results))
+        .catch((err) => console.log(err));
+    } else {
+      fetch(`${api.base}${api.key}&query=${searchTerm}`)
+      .then((res) => res.json())
+      .then((response) => setResult(response.results))
+      .catch((err) => console.log(err));
+    }
+  };
 
   return (
-    <div>
+    <div className="app">
       <Header />
-      <Search 
-        search={search}
-        setSearch={setSearch}
-        searchMovies={searchMovies}
-      />
-
-      <div className="movieContainer">
-        {movies.length > 0 ? movieItems : <h1>No Movies Found</h1>}
-      </div>
-
+      <main>
+        <InputContainer
+          inputHandler={inputHandler}
+          text={text}
+          searchHandler={searchHandler}
+        />
+        <div className="movie-card-container">
+          {result.map((movie) => {
+            return <MovieCards key={movie.id} movie={movie} />;
+          })}
+        </div>
+      </main>
     </div>
   );
 }

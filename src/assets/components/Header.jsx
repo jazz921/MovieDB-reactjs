@@ -1,11 +1,18 @@
-import React from 'react'
+import React from "react";
+import Logo from '../logo.png'
 
-function Header() {
+const Header = () => {
   return (
-    <header>
-      <h1>MovieDB | Find Movies Here!</h1>
-    </header>
-  )
-}
+    <div className="header">
+      <div style={{cursor: 'pointer'}} onClick={() => location.reload()}>
+        <img src={Logo} height="50" alt="" />
+        <div>
+          <h1>MovieDB</h1>
+          <p>Your best movie databse</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default Header
+export default Header;
